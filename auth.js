@@ -26,7 +26,7 @@ async function authorize(credentials, callback) {
     oAuth2Client.setCredentials(JSON.parse(token))
     return oAuth2Client
   } catch (error){
-    console.log(await getNewToken(oAuth2Client))
+    await getNewToken(oAuth2Client)
     return oAuth2Client
   }
 }
@@ -76,7 +76,6 @@ async function getNewToken(oAuth2Client) {
 
 async function auth(certfile){
   try{
-    console.log(certfile)
     let content = fs.readFileSync(certfile)
     return await authorize(JSON.parse(content))
   } catch (error){
