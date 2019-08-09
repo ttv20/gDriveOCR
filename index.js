@@ -11,13 +11,12 @@ const DocxMerger = require('docx-merger');
 const program = require('commander');
 
 
-let drive, cloudFolderId, file, lang
+let drive, cloudFolderId, file, lang, certfile
 let promises = []
 let tempsFiles = []
 let uploadedFiles = []
 let downloadedFiles = []
 let openedFiles = []
-let certfile = 'credentials.json'
 let active = 0
 let status = {
   uploadProgress: [],
@@ -247,7 +246,7 @@ if(!file){
   exit()
 }else{
   if(program.lang) lang  = program.lang
-  if(program.cert) certpath = program.cert
+  if(program.cert) certfile = program.cert
   run()
 }
 

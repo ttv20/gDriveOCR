@@ -75,10 +75,9 @@ async function getNewToken(oAuth2Client) {
 // }
 
 async function auth(certfile){
-  let content = fs.readFileSync(certfile)
-  return await authorize(JSON.parse(content))
   try{
-    let content = fs.readFileSync('credentials.json')
+    console.log(certfile)
+    let content = fs.readFileSync(certfile)
     return await authorize(JSON.parse(content))
   } catch (error){
     console.error('Error loading client secret file:', error)
