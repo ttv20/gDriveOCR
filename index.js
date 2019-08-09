@@ -216,7 +216,7 @@ program
       exit()
     }
   })
-  .description('OCR with Google Drive API')
+  .description('OCR by Google Drive API')
   .version('0.1.0')
   .option('-l, --lang <lang>', '2 digit language for OCR')
   .option('-c, --cert <cert>', 'Google API cert file path', './credentials.json')

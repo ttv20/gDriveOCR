@@ -2,7 +2,7 @@
 Node CLI program for OCR large PDF documents
 
 ## Purpose
-let you OCR PDF by Google Drive API
+Let you OCR (extract text from image) from PDF by Google Drive API
 
 ## Table of Contents
 
@@ -12,14 +12,14 @@ let you OCR PDF by Google Drive API
   
 ### installation
   ```bash
-  npm install gdriveocr
+  # npm install gdriveocr
   ```
   
 ### Usage Nodejs
   ```
-  Usage: index [options] <file>
+  Usage: gdriveocr [options] <file>
   
-  OCR with Google Drive API
+  OCR by Google Drive API
   
   Options:
     -V, --version      output the version number
@@ -29,4 +29,5 @@ let you OCR PDF by Google Drive API
   ```
   
 ### TODO
-...
+* add explain about google api cert file
+* support multiple files and images
