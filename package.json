@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/ttv20/gDriveOCR/issues"
   },
-  "homepage": "https://github.com/ttv20/gDriveOCR#readme"
+  "homepage": "https://github.com/ttv20/gDriveOCR#readme",
+  "bin": {
+    "gdriveocr": "index.js"
+  }
 }
