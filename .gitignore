@@ -1,6 +1,7 @@
 credentials.json
 token.json
 *.pdf
+.idea/
 
 # Logs
 logs
