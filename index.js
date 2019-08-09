@@ -18,6 +18,7 @@ let uploadedFiles = []
 let downloadedFiles = []
 let openedFiles = []
 let certfile = 'credentials.json'
+let active = 0
 let status = {
   uploadProgress: [],
   ocr: [],
@@ -103,7 +104,6 @@ async function uploadFile(index, file) {
         },
       }
     );
-    status.uploadProgress[index] = null
     return res.data;
   } catch (error){
     console.log('Error on upload file: \n', error)
@@ -156,13 +156,6 @@ async function download(index, fileName, fileId){
   return path.join(os.tmpdir(), drive+'.docx')
 }
 
-async function processPart(index, file){
-  let uploadedFile = await uploadFile(index, file)
-  uploadedFiles.push(uploadedFile)
-  let converted = await cloudConvert(index, path.basename(file), uploadedFile.id)
-  return await download(index, path.basename(file, '.pdf'), converted.id)
-}
-
 async function mergeDocx(files){
   for(let file of files){
     openedFiles.push(fs
@@ -186,7 +179,22 @@ function statusPrinter(){
   let ocr = arrSum(status.ocr)
   let download = arrSum(status.download)
   let finished = arrSum(status.finished)
-  process.stdout.write(`\r${Math.round(uploadProgress)}% uploaded, ${ocr} on OCR, ${download} download, ${finished} finished`)
+  process.stdout.write(`\r${active} processing: ${Math.round(uploadProgress)}% uploaded, ${ocr} on OCR, ${download} download, ${finished} finished`)
+}
+
+async function processPart(index, file){
+  while(active >= 10){
+    await new Promise((resolve)=>{
+      setTimeout(()=>resolve(), 500)
+    })
+  }
+  active++
+  let uploadedFile = await uploadFile(index, file)
+  uploadedFiles.push(uploadedFile)
+  let converted = await cloudConvert(index, path.basename(file), uploadedFile.id)
+  let downloadedFile = await download(index, path.basename(file, '.pdf'), converted.id)
+  active--
+  return downloadedFile
 }
 
 let run = async ()=>{
