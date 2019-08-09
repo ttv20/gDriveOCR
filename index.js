@@ -30,19 +30,22 @@ let status = {
 let exit = ()=>process.exit()
 
 async function splitPDF(file){
-  console.log('Open PDF...')
-  let pdfFile = await PDFDocument.load(fs.readFileSync(file))
-  let pagesCount = pdfFile.getPageCount()
-  if(pagesCount > 25){
-    console.log('Splitting PDF...')
-    for(let startPage of range(0, pagesCount, 25)){
-      endPage = startPage+24 > pagesCount ? pagesCount : startPage+24
+  let filesize = fs.statSync(file)['size']/1000/1000
+  // Google Drive has a limit of 10MB to convert files to Docs (and do OCR)
+  // so I check if the file is too big and split it to ~5MB files
+  if(filesize > 10){
+    let pdfFile = await PDFDocument.load(fs.readFileSync(file))
+    let pagesCount = pdfFile.getPageCount()
+    let partSize = Math.round(5 / (filesize / pagesCount))
+    console.log(`Splitting PDF to ${Math.ceil(pagesCount/partSize)} parts`)
+    for(let startPage of range(0, pagesCount, partSize)) {
+      let endPage =  Math.min(startPage + partSize - 1, pagesCount)
       let newPdf = await PDFDocument.create()
       let pages = await newPdf.copyPages(pdfFile, range(startPage, endPage))
-      for(let page of pages){
+      for (let page of pages) {
         newPdf.addPage(page)
       }
-      let newFilePath = path.join(os.tmpdir(),`${startPage+1}-${endPage+1}Pages.pdf`)
+      let newFilePath = path.join(os.tmpdir(), `${startPage + 1}-${endPage + 1}Pages.pdf`)
       tempsFiles.push(newFilePath)
       fs.writeFileSync(newFilePath, await newPdf.save())
     }
@@ -97,9 +100,6 @@ async function uploadFile(index, file) {
         onUploadProgress: evt => {
           const progress = (evt.bytesRead / fileSize) * 100
           status.uploadProgress[index] = Math.round(progress)
-          if(Math.round(progress) == 100){
-            status.uploadProgress[index] = null
-          }
         },
       }
     );
@@ -163,6 +163,22 @@ async function processPart(index, file){
   return await download(index, path.basename(file, '.pdf'), converted.id)
 }
 
+async function mergeDocx(files){
+  for(let file of files){
+    openedFiles.push(fs
+      .readFileSync(path.resolve(__dirname, file), 'binary'))
+  }
+  await new Promise((resolve, reject)=>{
+    var docx = new DocxMerger({},openedFiles);
+    docx.save('nodebuffer',function (data) {
+      fs.writeFile("output.docx", data, function(err){
+        reject(err)
+      }).then(resolve);
+    });
+  })
+  console.log('Done. saved as output.docx')
+}
+
 function statusPrinter(){
   const arrAvg = arr => arr.reduce((a,b) => a + b, 0) / arr.length
   const arrSum = arr => arr.reduce((a,b) => a + b, 0)
@@ -193,16 +209,8 @@ let run = async ()=>{
   clearInterval(statusInterval)
   console.log('All the files ready. merging the files, it may take few minutes...')
 
-  for(let file of downloadedFiles){
-    openedFiles.push(fs
-    .readFileSync(path.resolve(__dirname, file), 'binary'))
-  }
-  var docx = new DocxMerger({},openedFiles);
-  docx.save('nodebuffer',function (data) {
-      fs.writeFile("output.docx", data, function(err){
-      });
-  });
-  console.log('Done. saved as output.docx')
+  mergeDocx(downloadedFiles)
+
   exitCleanup()
 }
 
