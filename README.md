@@ -2,8 +2,7 @@
 Node CLI program for OCR large PDF documents
 
 ## Purpose
-Google Drive API has a limit of 10mb convert files to Google Doc (and do OCR)
-this program let you pass that
+let you OCR PDF by Google Drive API
 
 ## Table of Contents
 
