@@ -7,6 +7,7 @@ Let you OCR (extract text from image) from PDF by Google Drive API
 ## Table of Contents
 
   1. [Installation](#installation)
+  1. [How to get credentials file](#How to get credentials file)
   1. [Usage](#usage)
   1. [TODO](#todo)
   
@@ -14,8 +15,14 @@ Let you OCR (extract text from image) from PDF by Google Drive API
   ```bash
   # npm install -g gdriveocr
   ```
-  
-### Usage Nodejs
+
+### How to get credentials file
+to use this program you need to enable the Drive API on your Google account:
+* Go to [Google Drive API](https://developers.google.com/drive/api/v3/quickstart/nodejs)
+* Click on 'ENABLE THE DRIVE API'
+* Download the cert file by clicking on 'DOWNLOAD CLIENT CONFIGURATION'
+
+### Usage
   ```
   Usage: gdriveocr [options] <file>
   
@@ -23,11 +30,11 @@ Let you OCR (extract text from image) from PDF by Google Drive API
   
   Options:
     -V, --version      output the version number
-    -l, --lang <lang>  2 digit language for OCR
+    -l, --lang <lang>  2 digit language language hint for the OCR (if not specifid Google recognized alone)
     -c, --cert <cert>  Google API cert file path (default: "./credentials.json")
     -h, --help         output usage information
   ```
   
 ### TODO
-* add explain about google api cert file
 * support multiple files and images
+* better error handling

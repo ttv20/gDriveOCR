@@ -238,7 +238,7 @@ program
   })
   .description('OCR by Google Drive API')
   .version('0.1.0')
-  .option('-l, --lang <lang>', '2 digit language for OCR')
+  .option('-l, --lang <lang>', '2 digit language language hint for the OCR (if not specifid Google recognized alone)')
   .option('-c, --cert <cert>', 'Google API cert file path', './credentials.json')
   .parse(process.argv);
 
