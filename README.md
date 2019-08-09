@@ -12,7 +12,7 @@ Let you OCR (extract text from image) from PDF by Google Drive API
   
 ### installation
   ```bash
-  # npm install gdriveocr
+  # npm install -g gdriveocr
   ```
   
 ### Usage Nodejs
