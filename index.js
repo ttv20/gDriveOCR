@@ -153,7 +153,7 @@ async function download(index, fileName, fileId){
     });
   status.download[index] = 0
   status.finished[index] = 1
-  return path.join(os.tmpdir(), drive+'.docx')
+  return path.join(os.tmpdir(), fileName+'.docx')
 }
 
 async function mergeDocx(files){
