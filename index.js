@@ -164,12 +164,11 @@ async function mergeDocx(files){
   await new Promise((resolve, reject)=>{
     var docx = new DocxMerger({},openedFiles);
     docx.save('nodebuffer',function (data) {
-      fs.writeFile("output.docx", data, function(err){
+      fs.promises.writeFile("output.docx", data, function(err){
         reject(err)
-      }).then(resolve);
-    });
+      }).then(resolve)
+    })
   })
-  console.log('Done. saved as output.docx')
 }
 
 function statusPrinter(){
@@ -203,7 +202,7 @@ let run = async ()=>{
   const cloudFolder = await createTempDriveFolder(drive)
   cloudFolderId = cloudFolder.id
 
-  let files = await splitPDF('book.pdf')
+  let files = await splitPDF(file)
 
   for(const item in status){
     status[item] = Array(files.length).fill(0)
@@ -215,11 +214,16 @@ let run = async ()=>{
   let statusInterval = setInterval(statusPrinter, 500)
   let downloadedFiles = await Promise.all(promises)
   clearInterval(statusInterval)
-  console.log('All the files ready. merging the files, it may take few minutes...')
+  process.stdout.write('\rAll the files ready. merging the files, it may take few minutes...\n')
 
-  mergeDocx(downloadedFiles)
+  if(downloadedFiles.length === 1){
+    await fs.promises.copyFile(downloadedFiles[0], 'output.docx')
+  }else {
+    await mergeDocx(downloadedFiles)
+  }
+  console.log('Done. saved as output.docx')
 
-  exitCleanup()
+  await exitCleanup()
 }
 
 program
