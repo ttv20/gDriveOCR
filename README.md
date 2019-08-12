@@ -1,3 +1,4 @@
+
 # gDriveOCR
 Node CLI program for OCR large PDF documents
 
@@ -7,9 +8,9 @@ Let you OCR (extract text from image) from PDF by Google Drive API
 ## Table of Contents
 
   1. [Installation](#installation)
-  1. [How to get credentials file](#How to get credentials file)
-  1. [Usage](#usage)
-  1. [TODO](#todo)
+  2. [How to get credentials file](#how-to-get-credentials-file)
+  3. [Usage](#usage)
+  5. [TODO](#todo)
   
 ### installation
   ```bash
@@ -34,7 +35,7 @@ to use this program you need to enable the Drive API on your Google account:
     -c, --cert <cert>  Google API cert file path (default: "./credentials.json")
     -h, --help         output usage information
   ```
-  
+
 ### TODO
 * support multiple files and images
 * better error handling
