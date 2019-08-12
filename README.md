@@ -1,5 +1,8 @@
 
 # gDriveOCR
+  <a href="https://www.npmjs.com/package/gdriveocr"><img src="https://img.shields.io/npm/v/gdriveocr.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/gdriveocr"><img src="https://img.shields.io/npm/l/gdriveocr.svg" alt="License"></a>
+
 Node CLI program for OCR large PDF documents
 
 ## Purpose
