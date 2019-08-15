@@ -7,8 +7,9 @@ const path = require('path')
 const {range} = require('range')
 const {PDFDocument} = require('pdf-lib')
 const googleAuth = require('./auth')
-const DocxMerger = require('docx-merger');
-const program = require('commander');
+const DocxMerger = require('docx-merger')
+const program = require('commander')
+const {version} = require('./package.json')
 
 
 let drive, cloudFolderId, file, lang, certfile
@@ -59,7 +60,7 @@ async function getDriveService(oAuth2Client){
   const drive = google.drive({
     version: 'v3',
     auth: oAuth2Client
-  });
+  })
   return drive
 }
 
@@ -70,7 +71,7 @@ async function createTempDriveFolder(){
         name: 'temp_for_readit',
         mimeType: 'application/vnd.google-apps.folder'
       }
-    });
+    })
     console.log('Temp drive folder created')
     return res.data
   } catch (error){
@@ -81,13 +82,13 @@ async function createTempDriveFolder(){
 
 async function uploadFile(index, file) {
   status.uploadProgress[index] = 0
-  const fileSize = fs.statSync(file).size;
+  const fileSize = fs.statSync(file).size
   const fileName = path.basename(file)
   try{
     const res = await drive.files.create(
       {
         requestBody: {
-          name: path.basename(file),
+          name: fileName,
           parents: [cloudFolderId]
         },
         media: {
@@ -103,7 +104,7 @@ async function uploadFile(index, file) {
         },
       }
     );
-    return res.data;
+    return res.data
   } catch (error){
     console.log('Error on upload file: \n', error)
     process.exit(1)
@@ -133,7 +134,7 @@ async function cloudConvert(index, fileName, fileId){
 async function download(index, fileName, fileId){
   status.download[index] = 1
   const destPath = path.join(os.tmpdir(), fileName+'.docx')
-  const stream = fs.createWriteStream(destPath);
+  const stream = fs.createWriteStream(destPath)
   const res = await drive.files.export({
     fileId,
     mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -149,7 +150,7 @@ async function download(index, fileName, fileId){
           process.exit(1)
           reject(err)
         })
-    });
+    })
   status.download[index] = 0
   status.finished[index] = 1
   return path.join(os.tmpdir(), fileName+'.docx')
@@ -161,7 +162,7 @@ async function mergeDocx(files){
       .readFileSync(path.resolve(__dirname, file), 'binary'))
   }
   await new Promise((resolve, reject)=>{
-    var docx = new DocxMerger({},openedFiles);
+    var docx = new DocxMerger({},openedFiles)
     docx.save('nodebuffer',function (data) {
       fs.promises.writeFile("output.docx", data, function(err){
         reject(err)
@@ -236,10 +237,10 @@ program
     }
   })
   .description('OCR by Google Drive API')
-  .version('0.1.0')
+  .version(version)
   .option('-l, --lang <lang>', '2 digit language language hint for the OCR (if not specifid Google recognized alone)')
   .option('-c, --cert <cert>', 'Google API cert file path', './credentials.json')
-  .parse(process.argv);
+  .parse(process.argv)
 
 if(!file){
   console.error('file not provided')
@@ -264,7 +265,7 @@ async function exitCleanup() {
   try{
     await drive.files.delete({
       fileId: cloudFolderId
-    });
+    })
   } catch (error){
     console.log("error on delete the cloud folder, maybe it didn't created yet, delete it yourself")
     process.exit(1)
