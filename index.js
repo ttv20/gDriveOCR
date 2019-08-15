@@ -24,7 +24,7 @@ class gDriveOCR {
     this.downloadedFiles = []
     this.openedFiles = []
     this.options = {
-      file: false, lang: false, credFile: false
+      file: false, lang: false, credFile: false, outputFile: false
     }
     this.status = {
       active: 0,
@@ -66,13 +66,13 @@ class gDriveOCR {
 
   async createTempDriveFolder() {
     try {
+      console.log('Create temporary work folder in the drive')
       const res = await this.drive.files.create({
         requestBody: {
           name: 'temp_for_gdriveocr',
           mimeType: 'application/vnd.google-apps.folder'
         }
       })
-      console.log('Temp drive folder created')
       return res.data
     } catch (error) {
       console.log('Error create temp drive folder: \n', error)
@@ -165,7 +165,7 @@ class gDriveOCR {
     await new Promise((resolve, reject) => {
       let docFile = new DocxMerger({}, this.openedFiles)
       docFile.save('nodebuffer', function (data) {
-        fs.promises.writeFile("output.docx", data, function (err) {
+        fs.promises.writeFile(this.options.outputFile, data, function (err) {
           reject(err)
         }).then(resolve)
       })
@@ -219,11 +219,11 @@ class gDriveOCR {
     process.stdout.write('\rAll the files ready. merging the files, it may take few minutes...\n')
 
     if (downloadedFiles.length === 1) {
-      await fs.promises.copyFile(downloadedFiles[0], 'output.docx')
+      await fs.promises.copyFile(downloadedFiles[0], this.options.outputFile)
     } else {
       await this.mergeDocx(downloadedFiles)
     }
-    console.log('Done. saved as output.docx')
+    console.log('Done. saved in '+this.options.outputFile)
 
     await this.exitCleanup()
   }
@@ -277,6 +277,7 @@ if (require.main === module) {
     .version(version)
     .option('-c, --cred <cred>', 'Google API cred file path', './credentials.json')
     .option('-t, --token <token>', 'Google API token file path', './token.json')
+    .option('-o, --output-file <outputFile>', 'path to the output docx file', './output.docx')
     .option('-l, --lang <lang>', '2 digit language language hint for the OCR (if not specified, Google recognized it alone)')
     .option('-g, --lang-list', 'print all the languages code')
     .parse(process.argv)
@@ -303,6 +304,7 @@ if (require.main === module) {
     }
     Obj.options.credFile = fileExists(program.cred)
     Obj.options.tokenFile = program.token
+    Obj.options.outputFile = program.outputFile
 
     process.on('SIGINT', async ()=>{await Obj.exitCleanup.call(Obj)})
     process.on('SIGUSR1', async ()=>{await Obj.exitCleanup.call(Obj)})
