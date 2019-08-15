@@ -42,3 +42,4 @@ to use this program you need to enable the Drive API on your Google account:
 ### TODO
 * support multiple files and images
 * better error handling
+* API
