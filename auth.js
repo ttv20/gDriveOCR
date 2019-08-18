@@ -15,14 +15,14 @@ const SCOPES = ['https://www.googleapis.com/auth/drive'];
 async function authorize(credentials, tokenPath, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+    client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
-  try{
+  try {
     let token = fs.readFileSync(tokenPath)
     oAuth2Client.setCredentials(JSON.parse(token))
     return oAuth2Client
-  } catch (error){
+  } catch (error) {
     await getNewToken(oAuth2Client, tokenPath)
     return oAuth2Client
   }
@@ -43,7 +43,7 @@ async function getNewToken(oAuth2Client, tokenPath) {
   console.log('Authorize this app by visiting this url:', authUrl);
   let code = reader.question('Enter the code from that page here: ')
   console.log(code)
-  try{
+  try {
     const {tokens} = await oAuth2Client.getToken(code)
     oAuth2Client.setCredentials(tokens)
     fs.writeFile(tokenPath, JSON.stringify(tokens), (err) => {
@@ -51,17 +51,17 @@ async function getNewToken(oAuth2Client, tokenPath) {
       console.log('Token stored to', TOKEN_PATH);
     });
     return oAuth2Client
-  } catch (error){
+  } catch (error) {
     console.error('Error: unable to get token:', error)
     process.exit()
   }
 }
 
-async function auth(credFile, tokenPath){
-  try{
+async function auth(credFile, tokenPath) {
+  try {
     let content = fs.readFileSync(credFile)
     return await authorize(JSON.parse(content), tokenPath)
-  } catch (error){
+  } catch (error) {
     console.error('Error loading client secret file:', error)
     process.exit(1)
   }

@@ -231,9 +231,9 @@ class gDriveOCR {
   async exitCleanup() {
     console.log('\nCleanup and exit...')
     try {
-      for (file of this.openedFiles) file.close()
-      for (file of this.tempsFiles) fs.unlinkSync(file)
-      for (file of this.downloadedFiles) fs.unlinkSync(file)
+      for (let file of this.openedFiles) file.close()
+      for (let file of this.tempsFiles) fs.unlinkSync(file)
+      for (let file of this.downloadedFiles) fs.unlinkSync(file)
     } catch (error) {
       exit()
     }
