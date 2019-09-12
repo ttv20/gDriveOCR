@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 
 const {google} = require('googleapis')
 const fs = require('fs')
@@ -142,15 +143,17 @@ class gDriveOCR {
     }, {
       responseType: 'stream'
     })
-    res.data.pipe(stream)
     await new Promise((resolve, reject) => {
-      stream
-        .on('finish', () => resolve())
-        .on('error', err => {
-          console.log('Error on OCR on file: \n', error)
-          process.exit(1)
-          reject(err)
-        })
+      let customReject = (err) => {
+        console.log('Error on OCR on file: \n', error)
+        process.exit(1)
+        reject(err)
+      }
+      res.data
+        .on('error', customReject)
+        .pipe(stream)
+        .on('error', customReject)
+        .on('finish', resolve);
     })
     this.status.downloading--
     this.status.finished++

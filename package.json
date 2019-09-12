@@ -9,6 +9,8 @@
     "googleapis": "^39.2.0",
     "iso-639-1": "^2.1.0",
     "pdf-lib": "^1.0.1",
+    "pretty-ms": "^5.0.0",
+    "progress": "^2.0.3",
     "range": "^0.0.3",
     "readline-sync": "^1.4.10"
   },
